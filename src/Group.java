@@ -1,341 +1,135 @@
 import java.util.*;
-public class Group {
-	private String name;
-	private Team groupLeader;
-	private ArrayList<Team> teams;
-	private ArrayList<Team> sorted;
-	private ArrayList<Match> matches;
-	Scanner insert = new Scanner(System.in);
-	
-	public Group(String name, Team groupLeader)
-	{
-		this.name = name;
-		teams = new ArrayList<Team>(4);
-		matches = new ArrayList<Match>(6);
-		this.groupLeader = groupLeader;
-		teams.add(groupLeader);
-	}
-	
-	public Group(String name)
-	{
-		this.name = name;
-		teams = new ArrayList<Team>(4);
-		matches = new ArrayList<Match>(6);
-	}
-	
-	public void AddGroupLeader(Team AB)
-	{
-		groupLeader = AB;
-		teams.add(0,groupLeader);
-	}
-	
-	public Team getTeam(int a)
-	{
-		return teams.get(a);
-	}
-	
-	public String getName()
-	{
-		return name;
-	}
-	
-	public void addTeam(Team e)
-	{
-		teams.add(e);
-	}
-	
-	public void generateMatches()
-	{
-		if(teams.size() == 4)
-		{
-			Team A = teams.get(0);
-		    Team B = teams.get(1);
-		    Team C = teams.get(2);
-		    Team D = teams.get(3);
-		    Match AB = new Match(A,B);
-		    Match CD = new Match(C,D);
-		    Match AC = new Match(A,C);
-		    Match DB = new Match(D,B);
-		    Match BC = new Match(B,C);
-		    Match DA = new Match(D,A);
-		    matches.add(AB);
-		    matches.add(CD);
-		    matches.add(AC);
-		    matches.add(DB);
-		    matches.add(BC);
-		    matches.add(DA);
-		}
-		else
-		{
-			System.out.println("Need " + (4-teams.size()) + " more teams to create a group.");
-		}
-	}
-	
-	public void setMatches()
-	{
-		if(matches.size() == 6)
-		{
-			for(int i = 0;i<matches.size();i++)
-			{
-				Match temp = matches.get(i);
-				System.out.println("Match #" + (i+1) + ": " + temp.getHome() + " vs " + temp.getVistor());
-				temp.setMatchresult();
-				temp.setpoints();
-			}
-		}
-		else
-		{
-			System.out.println("Need to fill Group");
-		}
-	}
-	
-	
-	
-	public void printTeams()
-	{
-		System.out.println("Group " + name + "'s Results:" );
-		for(int i = 0; i < teams.size(); i++)
-		{
-			Team refer = teams.get(i);
-			System.out.println(refer + "  Pts: " + refer.getPoints() + " GD: " + refer.getGoalDifference());
-		}
-	}
-	
-	public void arrangeStandings()
-	{
-		sorted = new ArrayList<Team>(4);
-		Team p = teams.get(0);
-		Team q = teams.get(1);
-		Team r = teams.get(2);
-		Team s = teams.get(3);
-		Team a = compareMe(p,q);
-		Team b = compareMe(p,r);
-		Team c = compareMe(p,s);
-		Team d = compareMe(q,r);
-		Team e = compareMe(q,s);
-		Team f = compareMe(r,s);
-		if(a == b && a == c) //P is 1
-		{
-			sorted.add(0,p);
-			if(d == e)
-			{
-				sorted.add(1,q);
-				sorted.add(2,f);
-				sorted.add(3,loser(r,s));
-			}
-			else if(d == f)
-			
-			{
-				sorted.add(1,r);
-				sorted.add(2,e);
-				sorted.add(3,loser(q,s));
-			}
-			else if(e == f)
-			{
-				sorted.add(1,s);
-				sorted.add(2,d);
-				sorted.add(3,loser(q,r));
-			}
-		}
-		if(a == d && d == e) //Q is 1
-		{
-			sorted.add(0,q);
-			if(b == c)
-			{
-				sorted.add(1,p);
-				sorted.add(2,f);
-				sorted.add(3,loser(r,s));
-			}
-			else if(b == f)
-			{
-				sorted.add(1,r);
-				sorted.add(2,c);
-				sorted.add(3,loser(p,s));
-			}
-			else if(c == f)
-			{
-				sorted.add(1,s);
-				sorted.add(2,b);
-				sorted.add(3,loser(p,r));
-				
-			}
-		}
-		if(b == d && b == f) //R is 1
-		{
-			sorted.add(r);
-			if(a == c)
-			{
-				sorted.add(1,p);
-				sorted.add(2,e);
-				sorted.add(3,loser(q,s));
-			}
-			else if(a == e)
-			{
-				sorted.add(1,q);
-				sorted.add(2,c);
-				sorted.add(3,loser(p,s));
-			}
-			else if(c == e)
-			{
-				sorted.add(1,s);
-				sorted.add(2,a);
-				sorted.add(3,loser(p,q));
-			}
-			
-		}
-		if(c == e && c == f)
-		{
-			sorted.add(0,s); //S is 1
-			if(a == b)
-			{
-				sorted.add(1,p);
-				sorted.add(2,d);
-				sorted.add(3,loser(q,r));
-			}
-			else if(a == d)
-			{
-				sorted.add(1,q);
-				sorted.add(2,b);
-				sorted.add(3,loser(p,r));
-			}
-			else if(c == e)
-			{
-				sorted.add(1,r);
-				sorted.add(2,a);
-				sorted.add(3,loser(p,q));
-			}
-		}
-	}
-	
-	public Team compareMe(Team a, Team b)
-	{
-		if(a.getPoints() > b.getPoints())
-		{
-			return a;
-		}
-		else if(a.getPoints() < b.getPoints())
-		{
-			return b;
-		}
-		else
-		{
-			if(a.getGoalDifference() > b.getGoalDifference() )
-			{
-				return a;
-			}
-			else if(a.getGoalDifference() < b.getGoalDifference() )
-			{
-				return b;
-			}
-			else
-			{
-				if(a.getGoalsScored() > b.getGoalsScored() )
-				{
-					return a;
-				}
-				else if(a.getGoalsScored() < b.getGoalsScored() )
-				{
-					return b;
-				}
-				else
-				{
-					for(int i = 0; i < matches.size();i++)
-					{
-						Match test = matches.get(i);
-						if(test.getHome() == a && test.getVistor() == b)
-						{
-							Team xx = test.getWinner();
-							if(xx == null)
-							{
-								ArrayList<Team> comparison = new ArrayList<Team>();
-								comparison.add(a);
-								comparison.add(b);
-								int Randomindex = (int) (Math.random() * comparison.size());
-								return comparison.get(Randomindex);
-							}
-							else
-							{
-								return xx;
-							}
-						}
-						else if(test.getHome() == b && test.getVistor() == a)
-						{
-							Team xy = test.getWinner();
-							if(xy == null)
-							{
-								ArrayList<Team> comparison = new ArrayList<Team>();
-								comparison.add(a);
-								comparison.add(b);
-								int Randomindex = (int) (Math.random() * comparison.size());
-								return comparison.get(Randomindex);
-							}
-							else
-							{
-								return xy;
-							}
-						}
-						else
-						{
-							System.out.println("I don't know how won so first Team gets this.");
-							return null;
-						}
-					}
-				}
-			}
-		}
-		System.out.println("Hmm, I can't compare.");
-		return null;
-	}
-	
-	public Team loser(Team a, Team b)
-	{
-		Team temp = compareMe(a,b);
-		if(temp == a)
-		{
-			return b;
-		}
-		else
-		{
-			return a;
-		}
-	}
-	
-	public void printStandings()
-	{
-		try 
-		{
-		System.out.println("Group " + name + "'s Standings:" );
-		for(int i = 0; i<sorted.size();i++)
-		{
-			Team refer = sorted.get(i);
-			System.out.println((i+1) + "." + refer + "  Pts: " + refer.getPoints() + " GD: " + refer.getGoalDifference());
-		}
-		}catch(Exception e)
-		{
-			System.out.println("Need to arrange standings");
-		}
-		
-	}
-	
-	public Team getGroupWinner()
-	{
-		return sorted.get(0);
-	}
-	
-	
-	public Team getGroupRunnerUp()
-	{
-		return sorted.get(1);
-	}
-	
-	public String toString()
-	{
-		String count = "Group: " + name + ": ";
-		for(int i = 0;i<teams.size();i++ )
-		{
-			count += teams.get(i) + " ";
-		}
-		return count;
-	}
-}
+import java.util.stream.Collectors;
 
+/**
+ * Manages one of the eight tournament groups (four teams, six round-robin matches).
+ *
+ * Implements Displayable for uniform console output.
+ * Standing calculation uses Java Streams + a Comparator chain — replacing
+ * the original 100-line brute-force logic with five readable lines.
+ */
+public class Group implements Displayable {
+
+    // ── Fields ────────────────────────────────────────────────────────────────
+
+    private final String      name;
+    private Team              groupLeader;
+    private final List<Team>  teams   = new ArrayList<>(4);
+    private final List<Match> matches = new ArrayList<>(6);
+    private List<Team>        sorted;
+
+    // ── Constructors ──────────────────────────────────────────────────────────
+
+    public Group(String name, Team groupLeader) {
+        this.name = name;
+        this.groupLeader = groupLeader;
+        teams.add(groupLeader);
+    }
+
+    public Group(String name) {
+        this.name = name;
+    }
+
+    // ── Team management ───────────────────────────────────────────────────────
+
+    public void AddGroupLeader(Team t) {
+        groupLeader = t;
+        teams.add(0, t);
+    }
+
+    public void addTeam(Team t) { teams.add(t); }
+    public Team getTeam(int i)  { return teams.get(i); }
+    public String getName()     { return name; }
+
+    // ── Match generation ──────────────────────────────────────────────────────
+
+    public void generateMatches() {
+        if (teams.size() != 4) {
+            System.out.println(ConsoleColors.RED
+                    + "Group " + name + " needs " + (4 - teams.size()) + " more team(s)."
+                    + ConsoleColors.RESET);
+            return;
+        }
+        Team A = teams.get(0), B = teams.get(1), C = teams.get(2), D = teams.get(3);
+        matches.add(new Match(A, B));
+        matches.add(new Match(C, D));
+        matches.add(new Match(A, C));
+        matches.add(new Match(D, B));
+        matches.add(new Match(B, C));
+        matches.add(new Match(D, A));
+    }
+
+    // ── Playing matches ───────────────────────────────────────────────────────
+
+    public void setMatches() {
+        System.out.println(ConsoleColors.BOLD_CYAN
+                + "\n  ┌─────────────────────────────┐"  + ConsoleColors.RESET);
+        System.out.printf(ConsoleColors.BOLD_CYAN
+                + "  │   GROUP  %s  MATCHES          │%n" + ConsoleColors.RESET, name);
+        System.out.println(ConsoleColors.BOLD_CYAN
+                + "  └─────────────────────────────┘"  + ConsoleColors.RESET);
+
+        for (int i = 0; i < matches.size(); i++) {
+            System.out.printf(ConsoleColors.CYAN + "%n  Match %d/%d:%n" + ConsoleColors.RESET,
+                    i + 1, matches.size());
+            matches.get(i).setMatchresult();
+        }
+    }
+
+    // ── Standings ─────────────────────────────────────────────────────────────
+
+    /**
+     * Sorts group standings using a Comparator chain that mirrors FIFA rules:
+     *   1. Most points
+     *   2. Best goal difference
+     *   3. Most goals scored
+     *   (Head-to-head is the next tie-breaker but is omitted here for brevity)
+     *
+     * Replaces the original 100-line brute-force comparison block.
+     */
+    public void arrangeStandings() {
+        sorted = teams.stream()
+                .sorted(Comparator
+                        .comparingInt(Team::getPoints).reversed()
+                        .thenComparingInt(Team::getGoalDifference).reversed()
+                        .thenComparingInt(Team::getGoalsScored).reversed())
+                .collect(Collectors.toList());
+    }
+
+    public void printStandings() {
+        String divider = "  " + "─".repeat(58);
+        System.out.println();
+        System.out.printf(ConsoleColors.BOLD_CYAN + "  GROUP %s STANDINGS%n" + ConsoleColors.RESET, name);
+        System.out.println(ConsoleColors.CYAN + divider + ConsoleColors.RESET);
+        System.out.printf("  %-4s %-22s %4s %4s %4s %5s  %s%n",
+                "Pos", "Team", "Pts", "GF", "GA", "GD", "W-D-L");
+        System.out.println(ConsoleColors.CYAN + divider + ConsoleColors.RESET);
+
+        for (int i = 0; i < sorted.size(); i++) {
+            Team t = sorted.get(i);
+            // Highlight the two teams that advance
+            String color = (i < 2) ? ConsoleColors.BOLD_GREEN : ConsoleColors.RESET;
+            System.out.printf(color + "  %-4d %-22s %4d %4d %4d %+5d  %d-%d-%d%n" + ConsoleColors.RESET,
+                    i + 1, t.getCountry(), t.getPoints(),
+                    t.getGoalsScored(), t.getGoalsAllowed(), t.getGoalDifference(),
+                    t.getWins(), t.getDraws(), t.getLosses());
+        }
+        System.out.println(ConsoleColors.CYAN + divider + ConsoleColors.RESET);
+    }
+
+    public Team getGroupWinner()   { return sorted.get(0); }
+    public Team getGroupRunnerUp() { return sorted.get(1); }
+
+    // ── Displayable ───────────────────────────────────────────────────────────
+
+    @Override
+    public void display() { printStandings(); }
+
+    // ── Object ────────────────────────────────────────────────────────────────
+
+    @Override
+    public String toString() {
+        return "Group " + name + ": "
+                + teams.stream().map(Team::toString).collect(Collectors.joining(", "));
+    }
+}

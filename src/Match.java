@@ -1,116 +1,94 @@
-import java.util.*;
+import java.util.Scanner;
 
+/**
+ * Represents a group-stage match between two teams.
+ *
+ * Uses the Strategy pattern (MatchResultStrategy) to decouple score-entry
+ * logic from the match itself — swapping Manual ↔ Auto mode is one call.
+ */
 public class Match {
-	private int number;
-	private static int numMatches;
-	private Team team1;
-	private Team team2;
-	private int result1;
-	private int result2;
-	Scanner input = new Scanner(System.in);
-	
-	public Match(Team team1,int result1, Team team2, int result2)
-	{
-		this.team1 = team1;
-		this.result1 = result1;
-		this.team2 = team2;
-		this.result2 = result2;
-		numMatches++;
-	}
-	
-	public Match(Team team1, Team team2)
-	{
-		this.team1 = team1;
-		this.team2 = team2;
-		result1 = 0;
-		result2 = 0;
-		numMatches++;
-	}
-	
-	public void setMatchresult()
-	{
-		System.out.println(team1.getCountry() + ": ");
-		result1 = input.nextInt();
-		System.out.println(team2.getCountry() + ": ");
-		result2 = input.nextInt();
-	}
-	
-	public Team getHome()
-	{
-		return team1;
-	}
-	
-	public Team getVistor()
-	{
-		return team2;
-	}
-	
-	public Team getWinner()
-	{
-		if(result1 > result2)
-		{
-			return team1;
-		}
-		else if(result2 > result1)
-		{
-			return team2;
-		}
-		else
-		{
-			System.out.println("They drew");
-			return null;
-		}
-	}
-	
-	public Team getLoser()
-	{
-		if(result1 < result2)
-		{
-			return team1;
-		}
-		else if(result2 < result1)
-		{
-			return team2;
-		}
-		else
-		{
-			System.out.println("They drew");
-			return null;
-		}
-	}
-	
-	public void setpoints()
-	{
-		if(result1 > result2)
-		{
-			team1.setPoints(3);
-			team2.setPoints(0);
-		}
-		else if(result2 > result1)
-		{
-			team1.setPoints(0);
-			team2.setPoints(3);
-		}
-		else
-		{
-			team1.setPoints(1);
-			team2.setPoints(1);
-		}
-		
-		team1.setGoalsScored(result1);
-		team1.setGoalsAllowed(result2);
-		team2.setGoalsScored(result2);
-		team2.setGoalsAllowed(result1);
-	}
-	
-	public void printResult()
-	{
-		System.out.println(team1.getCountry() + " " + result1 + "-" + result2 + " " + team2.getCountry());
-	}
-	
-	@Override
-	public String toString()
-	{
-		return team1 + " vs " + team2;
-	}
+
+    // ── Strategy (shared across all Match instances) ──────────────────────────
+
+    private static MatchResultStrategy strategy =
+            new ManualResultStrategy(new Scanner(System.in));
+
+    public static void setStrategy(MatchResultStrategy s) { strategy = s; }
+
+    /** Package-visible so KnockoutMatch can delegate to the same strategy. */
+    static MatchResultStrategy getStrategy() { return strategy; }
+
+    // ── Instance state ────────────────────────────────────────────────────────
+
+    private static int matchCount = 0;
+
+    private final Team team1;
+    private final Team team2;
+    protected int result1;
+    protected int result2;
+
+    // ── Constructors ──────────────────────────────────────────────────────────
+
+    public Match(Team team1, Team team2) {
+        this.team1   = team1;
+        this.team2   = team2;
+        this.result1 = 0;
+        this.result2 = 0;
+        matchCount++;
+    }
+
+    // ── Core methods ──────────────────────────────────────────────────────────
+
+    /**
+     * Obtains scores via the current strategy, updates team records,
+     * prints the result, and logs stats — in one atomic step.
+     */
+    public void setMatchresult() {
+        System.out.println(ConsoleColors.BOLD + "    " + team1 + " vs " + team2 + ConsoleColors.RESET);
+        int[] scores = strategy.getResult(team1, team2);
+        result1 = scores[0];
+        result2 = scores[1];
+        setpoints();
+        printResult();
+        TournamentStats.getInstance().recordMatch(team1, result1, team2, result2);
+    }
+
+    /** Awards points and records goals for both teams. */
+    public void setpoints() {
+        team1.recordResult(result1, result2);
+        team2.recordResult(result2, result1);
+    }
+
+    public void printResult() {
+        String color = (result1 == result2) ? ConsoleColors.YELLOW : ConsoleColors.GREEN;
+        System.out.printf(color + "    %s  %d - %d  %s%n" + ConsoleColors.RESET,
+                team1, result1, result2, team2);
+    }
+
+    // ── Accessors ─────────────────────────────────────────────────────────────
+
+    public Team getHome()     { return team1; }
+    public Team getVisitor()  { return team2; }
+    /** @deprecated Use {@link #getVisitor()} */
+    @Deprecated
+    public Team getVistor()   { return team2; }
+
+    public Team getWinner() {
+        if (result1 > result2) return team1;
+        if (result2 > result1) return team2;
+        return null; // draw
+    }
+
+    public Team getLoser() {
+        if (result1 < result2) return team1;
+        if (result2 < result1) return team2;
+        return null; // draw
+    }
+
+    public static int getMatchCount() { return matchCount; }
+
+    // ── Object ────────────────────────────────────────────────────────────────
+
+    @Override
+    public String toString() { return team1 + " vs " + team2; }
 }
