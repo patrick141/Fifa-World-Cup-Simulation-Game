@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
  * Manages one of the eight tournament groups (four teams, six round-robin matches).
  *
  * Implements Displayable for uniform console output.
- * Standing calculation uses Java Streams + a Comparator chain — replacing
+ * Standing calculation uses Java Streams with a Comparator chain, replacing
  * the original 100-line brute-force logic with five readable lines.
  */
 public class Group implements Displayable {

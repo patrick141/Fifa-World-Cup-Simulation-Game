@@ -20,7 +20,7 @@ public class Player {
         // Required
         private final String name;
         private final int    number;
-        // Optional – sensible defaults
+        // Optional, sensible defaults
         private int      age      = 0;
         private int      height   = 0;
         private Position position = Position.CM;

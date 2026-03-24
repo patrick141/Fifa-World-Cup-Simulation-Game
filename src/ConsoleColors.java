@@ -1,6 +1,7 @@
 /**
- * ANSI escape-code constants for terminal colour output.
- * Utility class — cannot be instantiated.
+ * ANSI escape codes used throughout the app for colored terminal output.
+ * All fields are static constants, just reference them directly anywhere you need color.
+ * The private constructor prevents anyone from creating an instance of this class.
  */
 public final class ConsoleColors {
     public static final String RESET       = "\033[0m";
@@ -15,5 +16,5 @@ public final class ConsoleColors {
     public static final String BOLD_CYAN   = "\033[1;36m";
     public static final String BOLD_WHITE  = "\033[1;37m";
 
-    private ConsoleColors() {} // utility class – no instances
+    private ConsoleColors() {} // no instances
 }

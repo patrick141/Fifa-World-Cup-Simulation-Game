@@ -4,7 +4,7 @@ import java.util.Scanner;
  * Represents a group-stage match between two teams.
  *
  * Uses the Strategy pattern (MatchResultStrategy) to decouple score-entry
- * logic from the match itself — swapping Manual ↔ Auto mode is one call.
+ * logic from the match itself. Swapping between Manual and Auto mode is one call.
  */
 public class Match {
 
@@ -41,7 +41,7 @@ public class Match {
 
     /**
      * Obtains scores via the current strategy, updates team records,
-     * prints the result, and logs stats — in one atomic step.
+     * prints the result, and logs stats all in one step.
      */
     public void setMatchresult() {
         System.out.println(ConsoleColors.BOLD + "    " + team1 + " vs " + team2 + ConsoleColors.RESET);

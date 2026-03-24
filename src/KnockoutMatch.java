@@ -4,7 +4,7 @@
  *
  * Extends Match (inheritance) and overrides setMatchresult(), getWinner(),
  * and getLoser() to handle the extra-time / penalty logic.
- * Points are intentionally not updated in knockout matches — only group-stage
+ * Points are intentionally not updated in knockout matches. Only group-stage
  * points count toward team records.
  */
 public class KnockoutMatch extends Match {
