@@ -37,9 +37,36 @@ public class Group implements Displayable {
         teams.add(0, t);
     }
 
-    public void addTeam(Team t) { teams.add(t); }
-    public Team getTeam(int i)  { return teams.get(i); }
-    public String getName()     { return name; }
+    public void addTeam(Team t)  { teams.add(t); }
+    public Team getTeam(int i)   { return teams.get(i); }
+    public String getName()      { return name; }
+    public int size()            { return teams.size(); }
+
+    public List<Team> getTeams() {
+        return Collections.unmodifiableList(teams);
+    }
+
+    /**
+     * Used by DrawEngine when it needs to retry a pot draw.
+     * Keeps the Pot 1 seed in place and removes all other teams,
+     * resetting the group to its state after Pot 1 was drawn.
+     */
+    public void resetToPotOneSeed() {
+        if (groupLeader != null) {
+            teams.clear();
+            teams.add(groupLeader);
+        }
+    }
+
+    /**
+     * Restores the team list to a previously captured snapshot.
+     * Used by DrawEngine to roll back a failed pot assignment
+     * without losing earlier pots' placements.
+     */
+    public void restoreTeams(List<Team> saved) {
+        teams.clear();
+        teams.addAll(saved);
+    }
 
     // ── Match generation ──────────────────────────────────────────────────────
 

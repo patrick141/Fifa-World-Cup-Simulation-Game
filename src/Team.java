@@ -13,6 +13,7 @@ public class Team implements Displayable, Comparable<Team> {
     // ── Fields ────────────────────────────────────────────────────────────────
 
     private final String country;
+    private final Confederation confederation;
     private int points;
     private int goalsScored;
     private int goalsAllowed;
@@ -26,14 +27,23 @@ public class Team implements Displayable, Comparable<Team> {
 
     // ── Constructors ──────────────────────────────────────────────────────────
 
+    public Team(String country, Confederation confederation, int ranking) {
+        this.country       = country;
+        this.confederation = confederation;
+        this.ranking       = ranking;
+        this.roster        = new ArrayList<>(TEAM_SIZE);
+    }
+
+    public Team(String country, Confederation confederation) {
+        this(country, confederation, 0);
+    }
+
     public Team(String country, int ranking) {
-        this.country = country;
-        this.ranking = ranking;
-        this.roster  = new ArrayList<>(TEAM_SIZE);
+        this(country, null, ranking);
     }
 
     public Team(String country) {
-        this(country, 0);
+        this(country, null, 0);
     }
 
     // ── Roster management ─────────────────────────────────────────────────────
@@ -80,7 +90,8 @@ public class Team implements Displayable, Comparable<Team> {
 
     // ── Accessors ─────────────────────────────────────────────────────────────
 
-    public String getCountry()       { return country; }
+    public String        getCountry()       { return country; }
+    public Confederation getConfederation(){ return confederation; }
     public int    getRanking()       { return ranking; }
     public void   setRanking(int r)  { ranking = r; }
     public int    getPoints()        { return points; }

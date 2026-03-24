@@ -12,12 +12,19 @@
 public class WorldCup {
 
     private final TournamentConfig config;
+    private final DrawMode         drawMode;
 
-    public WorldCup(TournamentConfig config, boolean autoMode) {
-        this.config = config;
+    public WorldCup(TournamentConfig config, boolean autoMode, DrawMode drawMode) {
+        this.config   = config;
+        this.drawMode = drawMode;
         Match.setStrategy(autoMode
                 ? new AutoResultStrategy()
                 : new ManualResultStrategy(new java.util.Scanner(System.in)));
+    }
+
+    /** Convenience constructor — defaults to OFFICIAL draw. */
+    public WorldCup(TournamentConfig config, boolean autoMode) {
+        this(config, autoMode, DrawMode.OFFICIAL);
     }
 
     public void run() {
@@ -26,7 +33,9 @@ public class WorldCup {
 
         // ── GROUP STAGE ───────────────────────────────────────────────────────
         printSectionHeader("GROUP STAGE");
-        Group[] groups = config.buildGroups();
+        Group[] groups = (drawMode == DrawMode.SIMULATED && config.supportsSimulatedDraw())
+                ? drawTeams(config.buildPots())
+                : config.buildGroups();
         for (Group g : groups) {
             g.generateMatches();
             g.setMatches();
@@ -82,6 +91,19 @@ public class WorldCup {
         printChampionPodium(finalMatch.getWinner(), finalMatch.getLoser(),
                 thirdPlace.getWinner(), thirdPlace.getLoser());
         TournamentStats.getInstance().printSummary();
+    }
+
+    // ── Draw helpers ──────────────────────────────────────────────────────────
+
+    /**
+     * Displays the four pots, then runs DrawEngine to produce a valid
+     * constrained group assignment. Called only when drawMode == SIMULATED.
+     */
+    private Group[] drawTeams(Pot[] pots) {
+        printSectionHeader("TOURNAMENT DRAW");
+        System.out.println(ConsoleColors.BOLD_WHITE + "\n  Seeding Pots:" + ConsoleColors.RESET);
+        for (Pot p : pots) p.display();
+        return new DrawEngine().draw(pots);
     }
 
     // ── Display helpers ───────────────────────────────────────────────────────

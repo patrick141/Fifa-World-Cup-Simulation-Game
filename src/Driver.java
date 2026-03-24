@@ -6,7 +6,7 @@ import java.util.Scanner;
  *
  * Responsibilities are intentionally narrow: parse arguments, prompt for
  * year and mode, then hand off to WorldCup. All tournament logic lives in
- * WorldCup; all edition-specific data lives in the TournamentConfig impls.
+ * WorldCup. All edition-specific data lives in the TournamentConfig impls.
  *
  *   javac *.java
  *   java Driver           (prompts for year and mode)
@@ -52,7 +52,23 @@ public class Driver {
                     + ConsoleColors.RESET);
         }
 
-        new WorldCup(config, autoMode).run();
+        DrawMode drawMode = DrawMode.OFFICIAL;
+        if (config.supportsSimulatedDraw()) {
+            System.out.print("\n  Draw mode  (O)fficial 2018 groups / (S)imulate draw: ");
+            String dm = scanner.nextLine().trim().toLowerCase();
+            if (dm.startsWith("s")) {
+                drawMode = DrawMode.SIMULATED;
+                System.out.println(ConsoleColors.YELLOW
+                        + "  SIMULATED DRAW — groups will be randomly generated."
+                        + ConsoleColors.RESET);
+            } else {
+                System.out.println(ConsoleColors.CYAN
+                        + "  OFFICIAL DRAW — using the real 2018 group stage."
+                        + ConsoleColors.RESET);
+            }
+        }
+
+        new WorldCup(config, autoMode, drawMode).run();
         scanner.close();
     }
 

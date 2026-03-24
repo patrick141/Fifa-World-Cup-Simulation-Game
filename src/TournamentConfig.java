@@ -45,4 +45,13 @@ public interface TournamentConfig {
         }
         return g;
     }
+
+    /**
+     * Returns the four seeding pots used for a simulated draw.
+     * Returns null by default; override in editions that support it.
+     */
+    default Pot[] buildPots() { return null; }
+
+    /** Returns true if this edition supports a simulated draw via DrawEngine. */
+    default boolean supportsSimulatedDraw() { return false; }
 }
