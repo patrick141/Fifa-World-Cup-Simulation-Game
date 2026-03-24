@@ -1,0 +1,15 @@
+# Compiled output
+*.class
+bin/
+out/
+
+# macOS
+.DS_Store
+
+# VSCode
+.vscode/
+
+# Eclipse
+.classpath
+.project
+.settings/
